@@ -1,6 +1,8 @@
-﻿
-using System;
+﻿using System;
 
+/// <summary>
+/// Provides data about the current breath to the receiver when the ExhalationComplete event fires.
+/// </summary>
 public class ExhalationCompleteEventArgs : EventArgs
 {
     private float breathLength = 0;
@@ -54,6 +56,7 @@ public class ExhalationCompleteEventArgs : EventArgs
 }
 
 public delegate void ExhalationCompleteEventHandler(object sender, ExhalationCompleteEventArgs e);
+
 
 public class BreathAnalyser
 {
