@@ -26,7 +26,7 @@ public class FizzyoBreath : MonoBehaviour
 
     private void BreathAnalyser_ExhalationComplete(object sender, ExhalationCompleteEventArgs e)
     {
-        if (e.BreathGood)
+        if (e.IsBreathGood)
         {
             ScoreManager.Instance.GoodBreathAnimation();
         }

@@ -8,14 +8,14 @@ public class ExhalationCompleteEventArgs : EventArgs
     private float breathLength = 0;
     private int breathCount = 0;
     private float exhaledVolume = 0;
-    private bool breathGood = false;
+    private bool isBreathGood = false;
 
-    public ExhalationCompleteEventArgs(float breathLength, int breathCount, float exhaledVolume, bool breathGood)
+    public ExhalationCompleteEventArgs(float breathLength, int breathCount, float exhaledVolume, bool isBreathGood)
     {
         this.breathLength = breathLength;
         this.breathCount = breathCount;
         this.exhaledVolume = exhaledVolume;
-        this.breathGood = breathGood;
+        this.isBreathGood = isBreathGood;
     }
 
     /// The length of the exhaled breath in seconds
@@ -46,18 +46,44 @@ public class ExhalationCompleteEventArgs : EventArgs
     }
 
     /// Returns true if the breath was within the toterance of a 'good breath'
-    public bool BreathGood
+    public bool IsBreathGood
     {
         get
         {
-            return breathGood;
+            return isBreathGood;
         }
     }
 }
 
 public delegate void ExhalationCompleteEventHandler(object sender, ExhalationCompleteEventArgs e);
 
-
+/// <summary>
+/// Breath Analyser class decouples the logic of recognizing breaths from a stream of pressure samples
+/// from acting on the recognition.  To use:
+/// 
+/// 1. Create an instance of BreathAnalyser: BreathAnalyser breathAnalyser = new BreathAnalyser()
+/// 2. Set the calibration properties: MaxPressure and MaxBreathLength
+/// 3. Register for the ExhalationCompleteEvent: breathAnalyser.ExhalationComplete += ExhalationCompleteHandler
+/// 4. Add pressure samples in the update loop: AddSample(Time.DeltaTime, pressure)
+/// 5. The event will fire at the end of an exhaled breath and provide information for:
+/// 
+///    a) BreathLength
+///    b) BreathCount
+///    c) ExhaledVolume
+///    d) IsBreathGood
+/// 
+/// 6. You can interrogate the breath analyser at any time to determine:
+/// 
+///    a) BreathLength
+///    b) BreathCount
+///    c) ExhaledVolume
+///    d) IsExhaling
+///    e) MaxPressure
+///    f) MaxBreathLength
+/// 
+/// The algorithm for determining whether a breath is good or not is encapsulated in the method IsBreathGood()
+/// and currently returns true if the average breath pressure and breath length is within 80% of the max.
+/// </summary>
 public class BreathAnalyser
 {
     private float breathLength = 0;
@@ -165,18 +191,18 @@ public class BreathAnalyser
     /// Returns true if the breath was within the toterance of a 'good breath'
     public bool IsBreathGood(float breathLength, float maxBreathLength, float exhaledVolume, float maxPressure)
     {
-        bool breathGood = false;
+        bool isBreathGood = false;
 
         // Is the breath the right within 80% of the correct length
-        breathGood =  breathLength > BreathAnalyser.kTollerance * maxBreathLength;
+        isBreathGood =  breathLength > BreathAnalyser.kTollerance * maxBreathLength;
 
         // Is the average pressure within 80% of the max pressure
         if (this.breathLength > 0)
         {
-            breathGood = breathGood && ((exhaledVolume / breathLength) > BreathAnalyser.kTollerance * maxPressure);
+            isBreathGood = isBreathGood && ((exhaledVolume / breathLength) > BreathAnalyser.kTollerance * maxPressure);
         }
 
-        return breathGood;
+        return isBreathGood;
     }
 
     /// Resest the BreathAnalyser
