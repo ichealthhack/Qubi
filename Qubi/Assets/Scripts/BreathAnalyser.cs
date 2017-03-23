@@ -8,14 +8,14 @@ public class ExhalationCompleteEventArgs : EventArgs
     private float breathLength = 0;
     private int breathCount = 0;
     private float exhaledVolume = 0;
-    private bool breathGood = false;
+    private bool isBreathGood = false;
 
-    public ExhalationCompleteEventArgs(float breathLength, int breathCount, float exhaledVolume, bool breathGood)
+    public ExhalationCompleteEventArgs(float breathLength, int breathCount, float exhaledVolume, bool isBreathGood)
     {
         this.breathLength = breathLength;
         this.breathCount = breathCount;
         this.exhaledVolume = exhaledVolume;
-        this.breathGood = breathGood;
+        this.isBreathGood = isBreathGood;
     }
 
     /// The length of the exhaled breath in seconds
@@ -46,11 +46,11 @@ public class ExhalationCompleteEventArgs : EventArgs
     }
 
     /// Returns true if the breath was within the toterance of a 'good breath'
-    public bool BreathGood
+    public bool IsBreathGood
     {
         get
         {
-            return breathGood;
+            return isBreathGood;
         }
     }
 }
@@ -70,7 +70,7 @@ public delegate void ExhalationCompleteEventHandler(object sender, ExhalationCom
 ///    a) BreathLength
 ///    b) BreathCount
 ///    c) ExhaledVolume
-///    d) BreathGood
+///    d) IsBreathGood
 /// 
 /// 6. You can interrogate the breath analyser at any time to determine:
 /// 
@@ -188,18 +188,18 @@ public class BreathAnalyser
     /// Returns true if the breath was within the toterance of a 'good breath'
     public bool IsBreathGood(float breathLength, float maxBreathLength, float exhaledVolume, float maxPressure)
     {
-        bool breathGood = false;
+        bool isBreathGood = false;
 
         // Is the breath the right within 80% of the correct length
-        breathGood =  breathLength > BreathAnalyser.kTollerance * maxBreathLength;
+        isBreathGood =  breathLength > BreathAnalyser.kTollerance * maxBreathLength;
 
         // Is the average pressure within 80% of the max pressure
         if (this.breathLength > 0)
         {
-            breathGood = breathGood && ((exhaledVolume / breathLength) > BreathAnalyser.kTollerance * maxPressure);
+            isBreathGood = isBreathGood && ((exhaledVolume / breathLength) > BreathAnalyser.kTollerance * maxPressure);
         }
 
-        return breathGood;
+        return isBreathGood;
     }
 
     /// Resest the BreathAnalyser
