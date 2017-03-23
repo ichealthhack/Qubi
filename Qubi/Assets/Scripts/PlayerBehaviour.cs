@@ -7,6 +7,8 @@ public class PlayerBehaviour : MonoBehaviour
     public float JumpForce = 1;
     public float PlayerSpeed = 20f;
     public float Gravity = 9.8f;
+    private float maxJumpCount = 2;
+    private float availableJumpCount = 2;
 
     private Rigidbody2D thisRigidbody;
 
@@ -48,8 +50,21 @@ public class PlayerBehaviour : MonoBehaviour
 
     void Jump()
     {
-        JumpEffect.Stop();
-        JumpEffect.Play();
-        thisRigidbody.AddForce(new Vector2(0f, JumpForce), ForceMode2D.Impulse);
+        if (availableJumpCount > 0)
+        {
+            availableJumpCount--;
+
+            JumpEffect.Stop();
+            JumpEffect.Play();
+            thisRigidbody.AddForce(new Vector2(0f, JumpForce), ForceMode2D.Impulse);
+        }
+    }
+
+    public void Land()
+    {
+        if (thisRigidbody.velocity.y < .2f)
+        {
+            availableJumpCount = maxJumpCount;
+        }
     }
 }
