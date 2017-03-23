@@ -7,12 +7,15 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
     public bool LevelRunning = false;
-    private AudioSource CoinEffect;
+
+    public int SessionBreathCount = 8;
+    public int SessionSetCount = 3;
 
     public int CurrentLevelIndex;
     public PlatformLevel CurrentLevel;
 
     public GameObject HUD;
+    public GameObject LevelSetupUI;
     public GameObject LevelEndUI;
     public GameObject GameEndUI;
 
@@ -29,6 +32,7 @@ public class ScoreManager : MonoBehaviour
     public AudioSource BadBreathSound;
     public AudioSource LevelEndSound;
     public AudioSource GameEndSound;
+    private AudioSource CoinEffect;
 
     private void Awake()
     {
@@ -38,8 +42,7 @@ public class ScoreManager : MonoBehaviour
     private void Start()
     {
         CoinEffect = this.GetComponent<AudioSource>();
-        CurrentLevel = Levels[CurrentLevelIndex];
-        LevelRunning = true;
+        //CurrentLevel = Levels[CurrentLevelIndex];
     }
 
     private void Update()
@@ -131,6 +134,7 @@ public class ScoreManager : MonoBehaviour
         CurrentLevelIndex++;
         CurrentLevel = Levels[CurrentLevelIndex];
 
+        LevelSetupUI.SetActive(false);
         HUD.SetActive(true);
         LevelEndUI.SetActive(false);
 
