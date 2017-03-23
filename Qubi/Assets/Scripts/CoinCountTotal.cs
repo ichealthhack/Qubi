@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelTimeTotal : MonoBehaviour
+public class CoinCountTotal : MonoBehaviour
 {
     private Text uiText;
 
@@ -16,13 +16,13 @@ public class LevelTimeTotal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float newTimeTotal = 0f;
+        int newCount = 0;
 
         foreach (PlatformLevel level in ScoreManager.Instance.Levels)
         {
-            newTimeTotal += level.LevelTime;
+            newCount += level.CoinCount;
         }
 
-        uiText.text = newTimeTotal.ToString("0.0") + " secs";
+        uiText.text = newCount.ToString();
     }
 }
