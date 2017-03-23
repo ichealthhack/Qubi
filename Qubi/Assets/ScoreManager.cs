@@ -6,48 +6,82 @@ using UnityEngine.UI;
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
-    public bool LevelRunning = false;
 
+    public enum GameStage { SessionSetup, LevelPlaying, LevelEnd, GameEnd }
+    public GameStage currentStage = GameStage.SessionSetup;
+
+    // player prefs to load
     public int SessionBreathCount = 8;
     public int SessionSetCount = 3;
 
+    // Levels
     public int CurrentLevelIndex;
     public PlatformLevel CurrentLevel;
+    public List<PlatformLevel> Levels;
 
+    // UI
     public GameObject HUD;
     public GameObject LevelSetupUI;
     public GameObject LevelEndUI;
     public GameObject GameEndUI;
 
+    // In-Game objects
     public GameObject Player;
     public GameObject LevelEndPrefab;
     private GameObject levelEnd;
 
+    // Particle Effects
     public GameObject GoodBreathParticles;
     public GameObject BadBreathParticles;
 
-    public List<PlatformLevel> Levels;
-
+    // Audio
     public AudioSource GoodBreathSound;
     public AudioSource BadBreathSound;
     public AudioSource LevelEndSound;
     public AudioSource GameEndSound;
     private AudioSource CoinEffect;
 
+    private string sessionBreathCountKey = "BreathsCount";
+    private string sessionSetCountKey = "SetsCount";
+
+    // First thing to be called
     private void Awake()
     {
         Instance = this;
     }
 
+    // Called at the start
     private void Start()
     {
+        LoadPlayerPrefs();
+
         CoinEffect = this.GetComponent<AudioSource>();
-        //CurrentLevel = Levels[CurrentLevelIndex];
     }
 
+    #region SaveLoad
+    // Loads the player prefs
+    public void LoadPlayerPrefs()
+    {
+        if (PlayerPrefs.HasKey(sessionBreathCountKey))
+            SessionBreathCount = PlayerPrefs.GetInt(sessionBreathCountKey);
+
+        if (PlayerPrefs.HasKey(sessionSetCountKey))
+            SessionSetCount = PlayerPrefs.GetInt(sessionSetCountKey);
+    }
+
+    // Saves the player prefs
+    public void SavePlayerPrefs()
+    {
+        PlayerPrefs.SetInt(sessionBreathCountKey, SessionBreathCount);
+        PlayerPrefs.SetInt(sessionSetCountKey, SessionSetCount);
+        PlayerPrefs.Save();
+    }
+    #endregion
+
+    // Called once per frame
     private void Update()
     {
-        if (LevelRunning)
+        if (currentStage == GameStage.LevelPlaying)
         {
             CurrentLevel.LevelTime += Time.deltaTime;
 
@@ -56,15 +90,14 @@ public class ScoreManager : MonoBehaviour
                 CreateLevelEnd();
             }
         }
-        else
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                StartNewLevel();
-            }
+            ButtonPressed();
         }
     }
 
+    #region Breaths
 
     public void GoodBreathAnimation()
     {
@@ -84,13 +117,43 @@ public class ScoreManager : MonoBehaviour
         BadBreathSound.Stop();
         BadBreathSound.Play();
 
+        CurrentLevel.BadBreathCount++;
+
         GameObject particles = Instantiate(BadBreathParticles);
         particles.transform.position = Player.transform.GetChild(0).position;
         particles.transform.parent = Player.transform;
         Destroy(particles, 2f);
     }
 
-    // Update is called once per frame
+    #endregion
+
+    // handle button presses depending on current game stage
+    public void ButtonPressed()
+    {
+        switch (currentStage)
+        {
+            case GameStage.SessionSetup:
+                SavePlayerPrefs();
+                CreateLevels();
+                StartNewLevel();
+                break;
+
+            case GameStage.LevelPlaying:
+
+                break;
+
+            case GameStage.LevelEnd:
+                IncrementLevel();
+                StartNewLevel();
+                break;
+
+            case GameStage.GameEnd:
+                NewSession();
+                break;
+        }
+    }
+
+    // Called when a coin is touched
     public void GetCoin()
     {
         CurrentLevel.CoinCount++;
@@ -98,41 +161,45 @@ public class ScoreManager : MonoBehaviour
         CoinEffect.Play();
     }
 
-    public void EndLevel()
+    // shows the new session ui
+    public void NewSession()
     {
-        if (CurrentLevelIndex == Levels.Count - 1)
-        {
-            EndGame();
-        }
-        else
-        {
-            LevelRunning = false;
+        currentStage = GameStage.SessionSetup;
 
-            HUD.SetActive(false);
-            LevelEndUI.SetActive(true);
-
-            LevelEndSound.Stop();
-            LevelEndSound.Play();
-        }
-    }
-
-    public void EndGame()
-    {
-        LevelRunning = false;
-
+        LevelSetupUI.SetActive(true);
         HUD.SetActive(false);
         LevelEndUI.SetActive(false);
-        GameEndUI.SetActive(true);
-
-        GameEndSound.Stop();
-        GameEndSound.Play();
+        GameEndUI.SetActive(false);
     }
 
-    public void StartNewLevel()
+    // Creates the levels at the start of the game, after setting up number of breaths and sets/levels
+    public void CreateLevels()
     {
-        LevelRunning = true;
+        Levels = new List<PlatformLevel>();
+        Levels.Clear();
+
+        for (int i = 0; i < SessionSetCount; i++)
+        {
+            PlatformLevel newLevel = new PlatformLevel();
+            newLevel.ExhalationMax = SessionBreathCount;
+            Levels.Add(newLevel);
+        }
+
+        CurrentLevelIndex = 0;
+        CurrentLevel = Levels[CurrentLevelIndex];
+    }
+
+    // Increments the level
+    public void IncrementLevel()
+    {
         CurrentLevelIndex++;
         CurrentLevel = Levels[CurrentLevelIndex];
+    }
+
+    // Begin playing the current Level
+    public void StartNewLevel()
+    {
+        currentStage = GameStage.LevelPlaying;
 
         LevelSetupUI.SetActive(false);
         HUD.SetActive(true);
@@ -144,6 +211,40 @@ public class ScoreManager : MonoBehaviour
         }
 
         Player.transform.position = Vector3.zero;
+    }
+
+    // Shows the end of level scores and stops the game
+    public void EndLevel()
+    {
+        if (CurrentLevelIndex == Levels.Count - 1)
+        {
+            EndGame();
+        }
+        else
+        {
+            currentStage = GameStage.LevelEnd;
+
+            LevelSetupUI.SetActive(false);
+            HUD.SetActive(false);
+            LevelEndUI.SetActive(true);
+            GameEndUI.SetActive(false);
+
+            LevelEndSound.Stop();
+            LevelEndSound.Play();
+        }
+    }
+
+    public void EndGame()
+    {
+        currentStage = GameStage.GameEnd;
+
+        LevelSetupUI.SetActive(false);
+        HUD.SetActive(false);
+        LevelEndUI.SetActive(false);
+        GameEndUI.SetActive(true);
+
+        GameEndSound.Stop();
+        GameEndSound.Play();
     }
 
     public void CreateLevelEnd()
@@ -158,6 +259,7 @@ public class PlatformLevel
 {
     public int ExhalationMax = 8;
     public int ExhalationCount = 0;
+    public int BadBreathCount = 0;
 
     public int CoinCount = 0;
     public float LevelTime = 0f;

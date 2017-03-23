@@ -23,7 +23,7 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ScoreManager.Instance.LevelRunning && Input.GetKeyDown(KeyCode.Space))
+        if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying && Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
@@ -33,7 +33,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         //Vector2 newPosition = new Vector2(this.transform.position.x * PlayerSpeed * Time.deltaTime, this.transform.position.y);
         //thisRigidbody.MovePosition(newPosition);
-        if (ScoreManager.Instance.LevelRunning)
+        if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying)
         {
             float levelProgress = (float)ScoreManager.Instance.CurrentLevel.ExhalationCount / (float)ScoreManager.Instance.CurrentLevel.ExhalationMax;
             PlayerSpeed = Mathf.Lerp(ScoreManager.Instance.CurrentLevel.MinPlayerSpeed, ScoreManager.Instance.CurrentLevel.MaxPlayerSpeed, levelProgress);

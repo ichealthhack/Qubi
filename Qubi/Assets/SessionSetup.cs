@@ -14,6 +14,12 @@ public class SessionSetup : MonoBehaviour
         SetsDisplay.text = ScoreManager.Instance.SessionSetCount.ToString();
     }
 
+    private void Update()
+    {
+        BreathDisplay.text = ScoreManager.Instance.SessionBreathCount.ToString();
+        SetsDisplay.text = ScoreManager.Instance.SessionSetCount.ToString();
+    }
+
     public void IncrementBreathCount(int increment)
     {
         ScoreManager.Instance.SessionBreathCount += increment;
