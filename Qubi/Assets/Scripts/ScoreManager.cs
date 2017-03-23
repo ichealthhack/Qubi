@@ -41,8 +41,15 @@ public class ScoreManager : MonoBehaviour
     public AudioSource GameEndSound;
     private AudioSource CoinEffect;
 
+    // Save keys
     private string sessionBreathCountKey = "BreathsCount";
     private string sessionSetCountKey = "SetsCount";
+
+    // Events
+    public delegate void LevelResetEventHandler();
+    public event LevelResetEventHandler LevelStartEvent;
+    public event LevelResetEventHandler LevelEndEvent;
+    public event LevelResetEventHandler GameEndEvent;
 
     // First thing to be called
     private void Awake()
@@ -201,6 +208,9 @@ public class ScoreManager : MonoBehaviour
     {
         currentStage = GameStage.LevelPlaying;
 
+        if (LevelStartEvent != null)
+            LevelStartEvent();
+
         LevelSetupUI.SetActive(false);
         HUD.SetActive(true);
         LevelEndUI.SetActive(false);
@@ -224,6 +234,9 @@ public class ScoreManager : MonoBehaviour
         {
             currentStage = GameStage.LevelEnd;
 
+            if (LevelEndEvent != null)
+                LevelEndEvent();
+
             LevelSetupUI.SetActive(false);
             HUD.SetActive(false);
             LevelEndUI.SetActive(true);
@@ -237,6 +250,9 @@ public class ScoreManager : MonoBehaviour
     public void EndGame()
     {
         currentStage = GameStage.GameEnd;
+
+        if (GameEndEvent != null)
+            GameEndEvent();
 
         LevelSetupUI.SetActive(false);
         HUD.SetActive(false);
@@ -266,8 +282,8 @@ public class PlatformLevel
 
     public float difficulty = 1f;
 
-    public float MinPlayerSpeed = 4f;
-    public float MaxPlayerSpeed = 10f;
+    public float MinPlayerSpeed = 8f;
+    public float MaxPlayerSpeed = 16f;
 
     public PlatformLevel()
     {
