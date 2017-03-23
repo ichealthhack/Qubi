@@ -80,6 +80,9 @@ public delegate void ExhalationCompleteEventHandler(object sender, ExhalationCom
 ///    d) IsExhaling
 ///    e) MaxPressure
 ///    f) MaxBreathLength
+/// 
+/// The algorithm for determining whether a breath is good or not is encapsulated in the method IsBreathGood()
+/// and currently returns true if the average breath pressure and breath length is within 80% of the max.
 /// </summary>
 public class BreathAnalyser
 {
