@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinBehaviour : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public GameObject CoinParticlesPrefab;
-
-    private void OnTriggerEnter2D(Collider2D other)
+    public class CoinBehaviour : MonoBehaviour
     {
-        ScoreManager.Instance.GetCoin();
-        GameObject particles = Instantiate(CoinParticlesPrefab);
-        particles.transform.position = this.transform.position;
-        Destroy(particles, 1f);
-        Destroy(this.gameObject);
+        public GameObject CoinParticlesPrefab;
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            ScoreManager.Instance.GetCoin();
+            GameObject particles = Instantiate(CoinParticlesPrefab);
+            particles.transform.position = this.transform.position;
+            Destroy(particles, 1f);
+            Destroy(this.gameObject);
+        }
     }
 }

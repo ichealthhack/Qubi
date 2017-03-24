@@ -2,46 +2,49 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ParallaxBackground : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public List<BackgroundLayer> BackgroundLayers;
-
-    // Use this for initialization
-    void Start()
+    public class ParallaxBackground : MonoBehaviour
     {
-        BackgroundLayers = new List<BackgroundLayer>();
+        public List<BackgroundLayer> BackgroundLayers;
 
-        for (int i = 0; i < this.transform.childCount; i++)
+        // Use this for initialization
+        void Start()
         {
-            BackgroundLayers.Add(new BackgroundLayer(this.transform.GetChild(i)));
+            BackgroundLayers = new List<BackgroundLayer>();
+
+            for (int i = 0; i < this.transform.childCount; i++)
+            {
+                BackgroundLayers.Add(new BackgroundLayer(this.transform.GetChild(i)));
+            }
+        }
+
+        // Update is called once per frame
+        void LateUpdate()
+        {
+            Vector3 cameraPosition = Camera.main.transform.position;
+
+            foreach (BackgroundLayer layer in BackgroundLayers)
+            {
+                Vector3 newPosition = Vector3.Lerp(layer.StartPosition, cameraPosition, layer.ParallaxMultiplier);
+                newPosition.z = layer.StartPosition.z;
+
+                layer.LayerTransform.position = newPosition;
+            }
         }
     }
 
-    // Update is called once per frame
-    void LateUpdate()
+    public class BackgroundLayer
     {
-        Vector3 cameraPosition = Camera.main.transform.position;
+        public Transform LayerTransform;
+        public Vector3 StartPosition;
+        public float ParallaxMultiplier;
 
-        foreach (BackgroundLayer layer in BackgroundLayers)
+        public BackgroundLayer(Transform layerTransform)
         {
-            Vector3 newPosition = Vector3.Lerp(layer.StartPosition, cameraPosition, layer.ParallaxMultiplier);
-            newPosition.z = layer.StartPosition.z;
-
-            layer.LayerTransform.position = newPosition;
+            LayerTransform = layerTransform;
+            ParallaxMultiplier = LayerTransform.localPosition.z * .1f;
+            StartPosition = LayerTransform.position;
         }
-    }
-}
-
-public class BackgroundLayer
-{
-    public Transform LayerTransform;
-    public Vector3 StartPosition;
-    public float ParallaxMultiplier;
-
-    public BackgroundLayer(Transform layerTransform)
-    {
-        LayerTransform = layerTransform;
-        ParallaxMultiplier = LayerTransform.localPosition.z * .1f;
-        StartPosition = LayerTransform.position;
     }
 }

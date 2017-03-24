@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DuplicateHorizontal : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public int DuplicationCount = 3;
-
-    // Use this for initialization
-    void Start()
+    public class DuplicateHorizontal : MonoBehaviour
     {
-        GameObject original = this.transform.GetChild(0).gameObject;
+        public int DuplicationCount = 3;
 
-        for (int i = 0; i < DuplicationCount; i++)
+        // Use this for initialization
+        void Start()
         {
-            GameObject newGo = Instantiate(original);
-            newGo.transform.parent = this.transform;
-            newGo.transform.localPosition = original.transform.localPosition + Vector3.right * i * 10;
+            GameObject original = this.transform.GetChild(0).gameObject;
+
+            for (int i = 0; i < DuplicationCount; i++)
+            {
+                GameObject newGo = Instantiate(original);
+                newGo.transform.parent = this.transform;
+                newGo.transform.localPosition = original.transform.localPosition + Vector3.right * i * 10;
+            }
         }
     }
 }

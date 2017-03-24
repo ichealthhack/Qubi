@@ -2,69 +2,72 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBehaviour : MonoBehaviour
+namespace Assets.Scripts.Gameplay
 {
-    public float JumpForce = 1;
-    public float PlayerSpeed = 20f;
-    public float Gravity = 9.8f;
-    private float maxJumpCount = 2;
-    private float availableJumpCount = 2;
-
-    private Rigidbody2D thisRigidbody;
-
-    private AudioSource JumpEffect;
-
-    // Use this for initialization
-    void Start()
+    public class PlayerBehaviour : MonoBehaviour
     {
-        JumpEffect = this.GetComponent<AudioSource>();
-        thisRigidbody = this.GetComponent<Rigidbody2D>();
-        thisRigidbody.gravityScale = Gravity;
-    }
+        public float JumpForce = 1;
+        public float PlayerSpeed = 20f;
+        public float Gravity = 9.8f;
+        private float maxJumpCount = 2;
+        private float availableJumpCount = 2;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying && Input.GetKeyDown(KeyCode.Space))
+        private Rigidbody2D thisRigidbody;
+
+        private AudioSource JumpEffect;
+
+        // Use this for initialization
+        void Start()
         {
-            Jump();
+            JumpEffect = this.GetComponent<AudioSource>();
+            thisRigidbody = this.GetComponent<Rigidbody2D>();
+            thisRigidbody.gravityScale = Gravity;
         }
-    }
 
-    private void FixedUpdate()
-    {
-        //Vector2 newPosition = new Vector2(this.transform.position.x * PlayerSpeed * Time.deltaTime, this.transform.position.y);
-        //thisRigidbody.MovePosition(newPosition);
-        if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying)
+        // Update is called once per frame
+        void Update()
         {
-            float levelProgress = (float)ScoreManager.Instance.CurrentLevel.ExhalationCount / (float)ScoreManager.Instance.CurrentLevel.ExhalationMax;
-            PlayerSpeed = Mathf.Lerp(ScoreManager.Instance.CurrentLevel.MinPlayerSpeed, ScoreManager.Instance.CurrentLevel.MaxPlayerSpeed, levelProgress);
-
-            thisRigidbody.velocity = new Vector2(PlayerSpeed, thisRigidbody.velocity.y);
+            if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying && Input.GetKeyDown(KeyCode.Space))
+            {
+                Jump();
+            }
         }
-        else
+
+        private void FixedUpdate()
         {
-            thisRigidbody.velocity = Vector2.zero;
+            //Vector2 newPosition = new Vector2(this.transform.position.x * PlayerSpeed * Time.deltaTime, this.transform.position.y);
+            //thisRigidbody.MovePosition(newPosition);
+            if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying)
+            {
+                float levelProgress = (float)ScoreManager.Instance.CurrentLevel.ExhalationCount / (float)ScoreManager.Instance.CurrentLevel.ExhalationMax;
+                PlayerSpeed = Mathf.Lerp(ScoreManager.Instance.CurrentLevel.MinPlayerSpeed, ScoreManager.Instance.CurrentLevel.MaxPlayerSpeed, levelProgress);
+
+                thisRigidbody.velocity = new Vector2(PlayerSpeed, thisRigidbody.velocity.y);
+            }
+            else
+            {
+                thisRigidbody.velocity = Vector2.zero;
+            }
         }
-    }
 
-    void Jump()
-    {
-        if (availableJumpCount > 0)
+        void Jump()
         {
-            availableJumpCount--;
+            if (availableJumpCount > 0)
+            {
+                availableJumpCount--;
 
-            JumpEffect.Stop();
-            JumpEffect.Play();
-            thisRigidbody.AddForce(new Vector2(0f, JumpForce), ForceMode2D.Impulse);
+                JumpEffect.Stop();
+                JumpEffect.Play();
+                thisRigidbody.AddForce(new Vector2(0f, JumpForce), ForceMode2D.Impulse);
+            }
         }
-    }
 
-    public void Land()
-    {
-        if (thisRigidbody.velocity.y < .2f)
+        public void Land()
         {
-            availableJumpCount = maxJumpCount;
+            if (thisRigidbody.velocity.y < .2f)
+            {
+                availableJumpCount = maxJumpCount;
+            }
         }
     }
 }
