@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class FizzyoBreath : MonoBehaviour
 {
-    BreathAnalyser breathAnalyser = new BreathAnalyser();
+    BreathRecogniser breathRecogniser;
 
     public float FizzyoPressure;
     public float breathVolume;
@@ -15,13 +15,14 @@ public class FizzyoBreath : MonoBehaviour
     public Image InnerBar;
     public float InnerBarFill = 0f;
 
+    public float maxPressure = 0.4f;
+    public float maxBreathLength = 3f;
+
     // Use this for initialization
     void Start()
     {
-        breathAnalyser.MaxPressure = 0.4f;
-        breathAnalyser.MaxBreathLength = 3f;
-
-        breathAnalyser.ExhalationComplete += BreathAnalyser_ExhalationComplete;
+        breathRecogniser = new BreathRecogniser(maxPressure, maxBreathLength);
+        breathRecogniser.ExhalationComplete += BreathAnalyser_ExhalationComplete;
     }
 
     private void BreathAnalyser_ExhalationComplete(object sender, ExhalationCompleteEventArgs e)
@@ -40,14 +41,14 @@ public class FizzyoBreath : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        breathAnalyser.AddSample(Time.deltaTime, FizzyoDevice.Instance().Pressure());
+        breathRecogniser.AddSample(Time.deltaTime, FizzyoDevice.Instance().Pressure());
 
         FizzyoPressure = FizzyoDevice.Instance().Pressure();
 
-        breathVolume = breathAnalyser.ExhaledVolume;
+        breathVolume = breathRecogniser.ExhaledVolume;
 
         // Set Visuals
-        OuterBarFill = breathAnalyser.Breathlength / breathAnalyser.MaxBreathLength;
+        OuterBarFill = breathRecogniser.Breathlength / breathRecogniser.MaxBreathLength;
         OuterBar.fillAmount = OuterBarFill;
 
         InnerBarFill = (float)ScoreManager.Instance.CurrentLevel.ExhalationCount / (float)ScoreManager.Instance.CurrentLevel.ExhalationMax;

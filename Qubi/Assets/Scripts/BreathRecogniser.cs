@@ -84,7 +84,7 @@ public delegate void ExhalationCompleteEventHandler(object sender, ExhalationCom
 /// The algorithm for determining whether a breath is good or not is encapsulated in the method IsBreathGood()
 /// and currently returns true if the average breath pressure and breath length is within 80% of the max.
 /// </summary>
-public class BreathAnalyser
+public class BreathRecogniser
 {
     private float breathLength = 0;
     private int breathCount = 0;
@@ -96,6 +96,13 @@ public class BreathAnalyser
     private float minBreathThreshold = .05f;
 
     public event ExhalationCompleteEventHandler ExhalationComplete;
+
+
+    public BreathRecogniser(float MaxPressure, float MaxBreathLength)
+    {
+        maxPressure = MaxPressure;
+        maxBreathLength = MaxBreathLength;
+    }
 
     /// The length of the current exhaled breath in seconds
     public float Breathlength
@@ -194,12 +201,12 @@ public class BreathAnalyser
         bool isBreathGood = false;
 
         // Is the breath the right within 80% of the correct length
-        isBreathGood =  breathLength > BreathAnalyser.kTollerance * maxBreathLength;
+        isBreathGood = breathLength > BreathRecogniser.kTollerance * maxBreathLength;
 
         // Is the average pressure within 80% of the max pressure
         if (this.breathLength > 0)
         {
-            isBreathGood = isBreathGood && ((exhaledVolume / breathLength) > BreathAnalyser.kTollerance * maxPressure);
+            isBreathGood = isBreathGood && ((exhaledVolume / breathLength) > BreathRecogniser.kTollerance * maxPressure);
         }
 
         return isBreathGood;
