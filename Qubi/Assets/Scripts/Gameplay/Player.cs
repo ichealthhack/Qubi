@@ -57,7 +57,7 @@ namespace Assets.Scripts.Gameplay
             {
                 var pos = transform.position;
                 pos.y += 0.5f;
-                GameObject missile = (GameObject)Instantiate(missilePrefab, pos, transform.rotation);
+                Instantiate(missilePrefab, pos, transform.rotation);
             }
         }
 
