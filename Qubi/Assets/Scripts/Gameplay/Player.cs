@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Fizzyo;
+using UnityEngine;
 
 namespace Assets.Scripts.Gameplay
 {
