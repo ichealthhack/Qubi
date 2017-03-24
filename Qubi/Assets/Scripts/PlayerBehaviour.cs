@@ -7,6 +7,8 @@ public class PlayerBehaviour : MonoBehaviour
     public float JumpForce = 1;
     public float PlayerSpeed = 20f;
     public float Gravity = 9.8f;
+    private float maxJumpCount = 2;
+    private float availableJumpCount = 2;
 
     private Rigidbody2D thisRigidbody;
 
@@ -23,7 +25,7 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ScoreManager.Instance.LevelRunning && Input.GetKeyDown(KeyCode.Space))
+        if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying && Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
@@ -33,7 +35,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         //Vector2 newPosition = new Vector2(this.transform.position.x * PlayerSpeed * Time.deltaTime, this.transform.position.y);
         //thisRigidbody.MovePosition(newPosition);
-        if (ScoreManager.Instance.LevelRunning)
+        if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying)
         {
             float levelProgress = (float)ScoreManager.Instance.CurrentLevel.ExhalationCount / (float)ScoreManager.Instance.CurrentLevel.ExhalationMax;
             PlayerSpeed = Mathf.Lerp(ScoreManager.Instance.CurrentLevel.MinPlayerSpeed, ScoreManager.Instance.CurrentLevel.MaxPlayerSpeed, levelProgress);
@@ -48,8 +50,21 @@ public class PlayerBehaviour : MonoBehaviour
 
     void Jump()
     {
-        JumpEffect.Stop();
-        JumpEffect.Play();
-        thisRigidbody.AddForce(new Vector2(0f, JumpForce), ForceMode2D.Impulse);
+        if (availableJumpCount > 0)
+        {
+            availableJumpCount--;
+
+            JumpEffect.Stop();
+            JumpEffect.Play();
+            thisRigidbody.AddForce(new Vector2(0f, JumpForce), ForceMode2D.Impulse);
+        }
+    }
+
+    public void Land()
+    {
+        if (thisRigidbody.velocity.y < .2f)
+        {
+            availableJumpCount = maxJumpCount;
+        }
     }
 }
