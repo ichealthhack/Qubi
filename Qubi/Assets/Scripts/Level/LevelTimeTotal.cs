@@ -3,26 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelTimeTotal : MonoBehaviour
+namespace Assets.Scripts.Level
 {
-    private Text uiText;
-
-    // Use this for initialization
-    void Start()
+    public class LevelTimeTotal : MonoBehaviour
     {
-        uiText = this.GetComponent<Text>();
-    }
+        private Text uiText;
 
-    // Update is called once per frame
-    void Update()
-    {
-        float newTimeTotal = 0f;
-
-        foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+        // Use this for initialization
+        void Start()
         {
-            newTimeTotal += level.LevelTime;
+            uiText = this.GetComponent<Text>();
         }
 
-        uiText.text = newTimeTotal.ToString("0.0") + " secs";
+        // Update is called once per frame
+        void Update()
+        {
+            float newTimeTotal = 0f;
+
+            foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+            {
+                newTimeTotal += level.LevelTime;
+            }
+
+            uiText.text = newTimeTotal.ToString("0.0") + " secs";
+        }
     }
 }

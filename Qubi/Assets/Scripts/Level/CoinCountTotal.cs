@@ -3,26 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CoinCountTotal : MonoBehaviour
+namespace Assets.Scripts.Level
 {
-    private Text uiText;
-
-    // Use this for initialization
-    void Start()
+    public class CoinCountTotal : MonoBehaviour
     {
-        uiText = this.GetComponent<Text>();
-    }
+        private Text uiText;
 
-    // Update is called once per frame
-    void Update()
-    {
-        int newCount = 0;
-
-        foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+        // Use this for initialization
+        void Start()
         {
-            newCount += level.CoinCount;
+            uiText = this.GetComponent<Text>();
         }
 
-        uiText.text = newCount.ToString();
+        // Update is called once per frame
+        void Update()
+        {
+            int newCount = 0;
+
+            foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+            {
+                newCount += level.CoinCount;
+            }
+
+            uiText.text = newCount.ToString();
+        }
     }
 }

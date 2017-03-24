@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelEndCollision : MonoBehaviour
+namespace Assets.Scripts.Level
 {
-
-    private void OnTriggerEnter2D(Collider2D other)
+    public class LevelEndCollision : MonoBehaviour
     {
-        if (other.tag == "Player")
+
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            ScoreManager.Instance.EndLevel();
+            if (other.tag == "Player")
+            {
+                ScoreManager.Instance.EndLevel();
+            }
         }
     }
 }

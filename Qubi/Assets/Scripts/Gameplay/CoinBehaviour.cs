@@ -10,7 +10,7 @@ namespace Assets.Scripts.Gameplay
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            ScoreManager.Instance.GetCoin();
+            Level.ScoreManager.Instance.GetCoin();
             GameObject particles = Instantiate(CoinParticlesPrefab);
             particles.transform.position = this.transform.position;
             Destroy(particles, 1f);
