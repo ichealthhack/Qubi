@@ -306,6 +306,18 @@ public class ScoreManager : MonoBehaviour
 
         return newCount;
     }
+
+    public float LevelTimeTotal()
+    {
+        float newTimeTotal = 0f;
+
+        foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+        {
+            newTimeTotal += level.LevelTime;
+        }
+
+        return newTimeTotal;
+    }
 }
 
 [System.Serializable]
