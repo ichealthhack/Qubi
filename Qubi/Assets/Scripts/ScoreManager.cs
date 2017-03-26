@@ -13,6 +13,7 @@ public class ScoreManager : MonoBehaviour
     // player prefs to load
     public int SessionBreathCount = 8;
     public int SessionSetCount = 3;
+    public int CoinHighScore = 0;
 
     // Levels
     public int CurrentLevelIndex;
@@ -44,6 +45,7 @@ public class ScoreManager : MonoBehaviour
     // Save keys
     private string sessionBreathCountKey = "BreathsCount";
     private string sessionSetCountKey = "SetsCount";
+    private string coinHighScoreKey = "coinHighScore";
 
     // Events
     public delegate void LevelResetEventHandler();
@@ -63,6 +65,11 @@ public class ScoreManager : MonoBehaviour
         LoadPlayerPrefs();
 
         CoinEffect = this.GetComponent<AudioSource>();
+
+        LevelSetupUI.SetActive(true);
+        HUD.SetActive(false);
+        LevelEndUI.SetActive(false);
+        GameEndUI.SetActive(false);
     }
 
     #region SaveLoad
@@ -74,6 +81,9 @@ public class ScoreManager : MonoBehaviour
 
         if (PlayerPrefs.HasKey(sessionSetCountKey))
             SessionSetCount = PlayerPrefs.GetInt(sessionSetCountKey);
+
+        if (PlayerPrefs.HasKey(coinHighScoreKey))
+            CoinHighScore = PlayerPrefs.GetInt(coinHighScoreKey);
     }
 
     // Saves the player prefs
@@ -82,6 +92,17 @@ public class ScoreManager : MonoBehaviour
         PlayerPrefs.SetInt(sessionBreathCountKey, SessionBreathCount);
         PlayerPrefs.SetInt(sessionSetCountKey, SessionSetCount);
         PlayerPrefs.Save();
+    }
+
+    // If it's a new high score, save it
+    public void CheckHighScore()
+    {
+        if (TotalCoins() > CoinHighScore)
+        {
+            CoinHighScore = TotalCoins();
+            PlayerPrefs.SetInt(coinHighScoreKey, CoinHighScore);
+            PlayerPrefs.Save();
+        }
     }
     #endregion
 
@@ -133,6 +154,8 @@ public class ScoreManager : MonoBehaviour
     }
 
     #endregion
+
+    #region LevelFunctions
 
     // handle button presses depending on current game stage
     public void ButtonPressed()
@@ -251,6 +274,8 @@ public class ScoreManager : MonoBehaviour
     {
         currentStage = GameStage.GameEnd;
 
+        CheckHighScore();
+
         if (GameEndEvent != null)
             GameEndEvent();
 
@@ -267,6 +292,19 @@ public class ScoreManager : MonoBehaviour
     {
         levelEnd = Instantiate(LevelEndPrefab);
         levelEnd.transform.position = Player.transform.position + Vector3.right * 30f;
+    }
+    #endregion
+
+    public int TotalCoins()
+    {
+        int newCount = 0;
+
+        foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+        {
+            newCount += level.CoinCount;
+        }
+
+        return newCount;
     }
 }
 

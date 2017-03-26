@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CoinCountTotal : MonoBehaviour
+public class CoinCountHighScore : MonoBehaviour
 {
     private Text uiText;
 
@@ -16,6 +16,6 @@ public class CoinCountTotal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        uiText.text = ScoreManager.Instance.TotalCoins().ToString();
+        uiText.text = ScoreManager.Instance.CoinHighScore.ToString();
     }
 }
