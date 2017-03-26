@@ -44,7 +44,9 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else
         {
+            // stop the player if the level is not playing
             thisRigidbody.velocity = Vector2.zero;
+            thisRigidbody.angularVelocity = 0f;
         }
     }
 
