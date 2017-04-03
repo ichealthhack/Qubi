@@ -113,7 +113,7 @@ public class ScoreManager : MonoBehaviour
         {
             CurrentLevel.LevelTime += Time.deltaTime;
 
-            if (CurrentLevel.ExhalationCount >= CurrentLevel.ExhalationMax && levelEnd == null)
+            if (CurrentLevel.GoodBreathCount >= CurrentLevel.GoodBreathMax && levelEnd == null)
             {
                 CreateLevelEnd();
             }
@@ -132,7 +132,7 @@ public class ScoreManager : MonoBehaviour
         GoodBreathSound.Stop();
         GoodBreathSound.Play();
 
-        CurrentLevel.ExhalationCount++;
+        CurrentLevel.GoodBreathCount++;
 
         GameObject particles = Instantiate(GoodBreathParticles);
         particles.transform.position = Player.transform.GetChild(0).position;
@@ -211,7 +211,7 @@ public class ScoreManager : MonoBehaviour
         for (int i = 0; i < SessionSetCount; i++)
         {
             PlatformLevel newLevel = new PlatformLevel();
-            newLevel.ExhalationMax = SessionBreathCount;
+            newLevel.GoodBreathMax = SessionBreathCount;
             Levels.Add(newLevel);
         }
 
@@ -244,6 +244,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         Player.transform.position = Vector3.zero;
+        GameEndSound.Stop();
     }
 
     // Shows the end of level scores and stops the game
@@ -318,13 +319,37 @@ public class ScoreManager : MonoBehaviour
 
         return newTimeTotal;
     }
+
+    public int TotalGoodBreathCount()
+    {
+        int newCount = 0;
+
+        foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+        {
+            newCount += level.GoodBreathCount;
+        }
+
+        return newCount;
+    }
+
+    public int TotalBadBreathCount()
+    {
+        int newCount = 0;
+
+        foreach (PlatformLevel level in ScoreManager.Instance.Levels)
+        {
+            newCount += level.BadBreathCount;
+        }
+
+        return newCount;
+    }
 }
 
 [System.Serializable]
 public class PlatformLevel
 {
-    public int ExhalationMax = 8;
-    public int ExhalationCount = 0;
+    public int GoodBreathMax = 8;
+    public int GoodBreathCount = 0;
     public int BadBreathCount = 0;
 
     public int CoinCount = 0;

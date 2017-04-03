@@ -51,7 +51,7 @@ public class FizzyoBreath : MonoBehaviour
         OuterBarFill = breathRecogniser.Breathlength / breathRecogniser.MaxBreathLength;
         OuterBar.fillAmount = OuterBarFill;
 
-        InnerBarFill = (float)ScoreManager.Instance.CurrentLevel.ExhalationCount / (float)ScoreManager.Instance.CurrentLevel.ExhalationMax;
+        InnerBarFill = (float)ScoreManager.Instance.CurrentLevel.GoodBreathCount / (float)ScoreManager.Instance.CurrentLevel.GoodBreathMax;
         InnerBar.fillAmount = InnerBarFill;
     }
 }

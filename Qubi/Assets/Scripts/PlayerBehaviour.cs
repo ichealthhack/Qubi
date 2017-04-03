@@ -37,7 +37,7 @@ public class PlayerBehaviour : MonoBehaviour
         //thisRigidbody.MovePosition(newPosition);
         if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying)
         {
-            float levelProgress = (float)ScoreManager.Instance.CurrentLevel.ExhalationCount / (float)ScoreManager.Instance.CurrentLevel.ExhalationMax;
+            float levelProgress = (float)ScoreManager.Instance.CurrentLevel.GoodBreathCount / (float)ScoreManager.Instance.CurrentLevel.GoodBreathMax;
             PlayerSpeed = Mathf.Lerp(ScoreManager.Instance.CurrentLevel.MinPlayerSpeed, ScoreManager.Instance.CurrentLevel.MaxPlayerSpeed, levelProgress);
 
             thisRigidbody.velocity = new Vector2(PlayerSpeed, thisRigidbody.velocity.y);

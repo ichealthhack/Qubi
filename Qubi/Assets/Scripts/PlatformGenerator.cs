@@ -27,13 +27,14 @@ public class PlatformGenerator : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        ScoreManager.Instance.LevelEndEvent += Reset;
+        ScoreManager.Instance.LevelEndEvent += ResetPlatforms;
+        ScoreManager.Instance.GameEndEvent += ResetPlatforms;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying)
+        if (ScoreManager.Instance.currentStage == ScoreManager.GameStage.LevelPlaying)
         {
             // create platforms ahead of the player
             float distanceToNextPlatform = HorizontalPosition - player.transform.position.x;
@@ -97,7 +98,7 @@ public class PlatformGenerator : MonoBehaviour
         }
     }
 
-    public void Reset()
+    public void ResetPlatforms()
     {
         HorizontalPosition = 0f;
         DestoryAllPlatforms();

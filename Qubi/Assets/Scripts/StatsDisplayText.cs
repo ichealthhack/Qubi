@@ -19,10 +19,16 @@ public class StatsDisplayText : MonoBehaviour
         LevelCurrent,
         LevelCount,
         SessionBreathCount,
-        SessionSetCount
+        SessionSetCount,
+        GoodBreathCountCurrentLevel,
+        BadBreathCountCurrentLevel,
+        GoodBreathCountTotal,
+        BadBreathCountTotal
     }
 
     public GameStats StatsToDisplay = (GameStats)0;
+
+    public string Suffix = "";
 
     private void Start()
     {
@@ -36,39 +42,55 @@ public class StatsDisplayText : MonoBehaviour
         switch (StatsToDisplay)
         {
             case GameStats.CoinCountCurrentRound:
-                stringToDisplay = ScoreManager.Instance.CurrentLevel.CoinCount.ToString();
+                stringToDisplay = ScoreManager.Instance.CurrentLevel.CoinCount.ToString() + Suffix;
                 break;
 
             case GameStats.CoinCountTotal:
-                stringToDisplay = ScoreManager.Instance.TotalCoins().ToString();
+                stringToDisplay = ScoreManager.Instance.TotalCoins().ToString() + Suffix;
                 break;
 
             case GameStats.CoinCountHighScore:
-                stringToDisplay = ScoreManager.Instance.CoinHighScore.ToString();
+                stringToDisplay = ScoreManager.Instance.CoinHighScore.ToString() + Suffix;
                 break;
 
             case GameStats.LevelTime:
-                stringToDisplay = ScoreManager.Instance.CurrentLevel.LevelTime.ToString();
+                stringToDisplay = ScoreManager.Instance.CurrentLevel.LevelTime.ToString("0.0") + Suffix;
                 break;
 
             case GameStats.LevelTimeTotal:
-                stringToDisplay = ScoreManager.Instance.LevelTimeTotal().ToString();
+                stringToDisplay = ScoreManager.Instance.LevelTimeTotal().ToString("0.0") + Suffix;
                 break;
 
             case GameStats.LevelCurrent:
-                stringToDisplay = (ScoreManager.Instance.CurrentLevelIndex + 1).ToString();
+                stringToDisplay = (ScoreManager.Instance.CurrentLevelIndex + 1).ToString() + Suffix;
                 break;
 
             case GameStats.LevelCount:
-                stringToDisplay = ScoreManager.Instance.Levels.Count.ToString();
+                stringToDisplay = ScoreManager.Instance.Levels.Count.ToString() + Suffix;
                 break;
 
             case GameStats.SessionBreathCount:
-                stringToDisplay = ScoreManager.Instance.SessionBreathCount.ToString();
+                stringToDisplay = ScoreManager.Instance.SessionBreathCount.ToString() + Suffix;
                 break;
 
             case GameStats.SessionSetCount:
-                stringToDisplay = ScoreManager.Instance.SessionSetCount.ToString();
+                stringToDisplay = ScoreManager.Instance.SessionSetCount.ToString() + Suffix;
+                break;
+
+            case GameStats.GoodBreathCountCurrentLevel:
+                stringToDisplay = ScoreManager.Instance.CurrentLevel.GoodBreathCount.ToString() + Suffix;
+                break;
+
+            case GameStats.BadBreathCountCurrentLevel:
+                stringToDisplay = ScoreManager.Instance.CurrentLevel.BadBreathCount.ToString() + Suffix;
+                break;
+
+            case GameStats.GoodBreathCountTotal:
+                stringToDisplay = ScoreManager.Instance.TotalGoodBreathCount().ToString() + Suffix;
+                break;
+
+            case GameStats.BadBreathCountTotal:
+                stringToDisplay = ScoreManager.Instance.TotalBadBreathCount().ToString() + Suffix;
                 break;
         }
 
